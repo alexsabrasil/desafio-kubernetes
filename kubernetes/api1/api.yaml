@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api1
+  template:
+    metadata:
+      labels:
+        app: api1
+    spec:
+      containers:
+        - name: api1
+          image: desafio-api1:1.0
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PORT
+              value: "3000"
+            - name: DB_HOST
+              value: postgres-api1
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: api_database
+            - name: DB_USER
+              value: admin
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: api1-db-secret
+                  key: POSTGRES_PASSWORD
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api1
+spec:
+  selector:
+    app: api1
+  ports:
+    - port: 3000
+      targetPort: 3000
+  type: ClusterIP

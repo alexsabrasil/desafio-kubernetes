@@ -1,0 +1,25 @@
+# Dependências Node.js
+node_modules/
+**/node_modules/
+
+# Variáveis de ambiente e credenciais
+.env
+**/.env
+.env.*
+**/.env.*
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sistema operacional / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Diagnóstico local do Docker
+docker-diagnostics.zip
+
+# Arquivos temporários
+*.tmp
+*.temp

@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-api2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-api2
+  template:
+    metadata:
+      labels:
+        app: postgres-api2
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:15-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: desafio2_db
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: api2-db-secret
+                  key: POSTGRES_PASSWORD
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+            - name: initdb
+              mountPath: /docker-entrypoint-initdb.d/init.sql
+              subPath: init.sql
+      volumes:
+        - name: postgres-data
+          emptyDir: {}
+        - name: initdb
+          configMap:
+            name: api2-initdb
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-api2
+spec:
+  selector:
+    app: postgres-api2
+  ports:
+    - port: 5432
+      targetPort: 5432
+  type: ClusterIP
